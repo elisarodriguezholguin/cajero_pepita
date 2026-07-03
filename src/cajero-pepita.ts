@@ -218,63 +218,72 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-const opciones: Record<string, () => void> = {
-  "1": () => {
-    console.log(`Saldo actual: $${cajero.consultarSaldo()}`);
-    mostrarMenu();
+// ===== PROMISE + ASYNC/AWAIT =====
+const preguntar = (texto: string): Promise<string> =>
+  new Promise(resolve => rl.question(texto, resolve));
+
+const opciones: Record<string, () => Promise<void>> = {
+  "1": async () => {
+    console.log(`\n💰 Saldo disponible: $${cajero.consultarSaldo()}`);
   },
-  "2": () => {
-    rl.question("Monto a depositar: ", (input) => {
-      console.log(cajero.depositar(Number(input)));
-      mostrarMenu();
-    });
+ "2": async () => {
+  const input = await preguntar("📥 Monto a depositar: $");
+  console.log(`\n${cajero.depositar(Number(input))}`);
+},
+ "3": async () => {
+  const input = await preguntar("📤 Monto a retirar: $");
+  console.log(`\n${cajero.retirar(Number(input))}`);
+},
+  "4": async () => {
+    console.log(`\n${cajero.deshacerUltimaOperacion()}`);
   },
-  "3": () => {
-    rl.question("Monto a retirar: ", (input) => {
-      console.log(cajero.retirar(Number(input)));
-      mostrarMenu();
-    });
-  },
-  "4": () => {
-    console.log(cajero.deshacerUltimaOperacion());
-    mostrarMenu();
-  },
-  "5": () => {
+  "5": async () => {
     const historial = cajero.verHistorial();
+    console.log("\n📋 Historial de transacciones:");
+    console.log("─".repeat(40));
     if (historial.length === 0) {
-      console.log("No hay transacciones registradas.");
+      console.log("  No hay transacciones registradas.");
     } else {
       historial.forEach((t, index) => {
-        console.log(`${index + 1}. ${t.tipo} - $${t.monto} - ${t.fecha.toLocaleString()}`);
+        const emoji = t.tipo === "RETIRO" ? "📤" : "📥";
+        console.log(`  ${index + 1}. ${emoji} ${t.tipo} - $${t.monto} - ${t.fecha.toLocaleString()}`);
       });
     }
-    mostrarMenu();
+    console.log("─".repeat(40));
   },
-  "6": () => {
-    console.log("Gracias por usar el cajero. ¡Hasta luego!");
+  "6": async () => {
+    console.log("\n👋 Gracias por usar el Cajero Pepita. ¡Hasta luego!");
+    console.log("═".repeat(40));
     rl.close();
   },
 };
 
-function mostrarMenu(): void {
-  console.log("\n========= CAJERO AUTOMÁTICO =========");
-  console.log("1. Consultar saldo");
-  console.log("2. Depositar");
-  console.log("3. Retirar");
-  console.log("4. Deshacer última operación");
-  console.log("5. Ver historial de transacciones");
-  console.log("6. Salir");
-  console.log("======================================");
+async function iniciar(): Promise<void> {
+  console.log("\n" + "═".repeat(40));
+  console.log("  Bienvenido al Cajero Automático");
+  console.log("            PEPITA");
+  console.log("═".repeat(40));
+  console.log("  1. 💰  Consultar saldo");
+  console.log("  2. 📥  Depositar");
+  console.log("  3. 📤  Retirar");
+  console.log("  4. ↩️   Deshacer última operación");
+  console.log("  5. 📋  Ver historial");
+  console.log("  6. ➡️  Salir");
+  console.log("═".repeat(40));
 
-  rl.question("Elige una opción: ", (opcion) => {
-    const accion = opciones[opcion.trim()];
-    if (accion) {
-      accion();
-    } else {
-      console.log("Opción inválida, intenta de nuevo.");
-      mostrarMenu();
+  let activo = true;
+  while (activo) {
+  const opcion = await preguntar("\n ---- Elige una opción (1-6): ");
+  const accion = opciones[opcion.trim()];
+  if (accion) {
+    await accion();
+    if (opcion.trim() === "6") {
+      activo = false;
     }
-  });
+  } else {
+    console.log("⚠️  Opción inválida. Elige entre 1 y 6.");
+  }
+}
 }
 
-mostrarMenu();
+iniciar();
