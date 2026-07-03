@@ -1,4 +1,5 @@
 import * as readline from "readline";
+import { EventEmitter } from "stream";
 
 // ===== ENUM =====
 enum TipoTransaccion {
@@ -23,7 +24,7 @@ interface Factura {
 }
 
 type Resultado<T> =
-  | { ok: true; valor: T }
+  | { ok: true; valor: T }//correccion
   | { ok: false; error: string };
 
 type Listener = (data: any) => void;
@@ -37,9 +38,9 @@ function memoize(fn: Function) {
     return cache.get(key);
   };
 }
-
+EventEmitter
 // ===== DESACOPLAMIENTO POR EVENTOS =====
-class EventBus {
+class EventBus { ///usar eventEmitir
   private static eventos: Map<string, Listener[]> = new Map();
 
   static on(evento: string, listener: Listener): void {
@@ -84,7 +85,7 @@ class CargaExtrema {
   }
 }
 
-// ===== REGLAS DE NEGOCIO + CÁLCULO Y FALLA (POO + Funcional + ROP) =====
+// ===== logicas DE NEGOCIO + CÁLCULO Y FALLA (POO + Funcional + ROP) =====
 class ProcesadorPago {
 
   static crearFactura(monto: number, tipo: TipoTransaccion): Resultado<Factura> {
