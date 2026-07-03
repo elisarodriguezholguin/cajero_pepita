@@ -260,7 +260,7 @@ const opciones: Record<string, () => Promise<void>> = {
 
 async function iniciar(): Promise<void> {
   console.log("\n" + "═".repeat(40));
-  console.log("  Bienvenido al Cajero Automático");
+  console.log(" 7 Bienvenido al Cajero Automático");
   console.log("            PEPITA");
   console.log("═".repeat(40));
   console.log("  1. 💰  Consultar saldo");
