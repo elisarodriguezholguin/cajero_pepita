@@ -1,5 +1,5 @@
 import * as readline from "readline";
-import { EventEmitter } from "stream";
+//import { EventEmitter } from "stream";
 
 // ===== ENUM =====
 enum TipoTransaccion {
@@ -38,7 +38,7 @@ function memoize(fn: Function) {
     return cache.get(key);
   };
 }
-EventEmitter
+//EventEmitter
 // ===== DESACOPLAMIENTO POR EVENTOS =====
 class EventBus { ///usar eventEmitir
   private static eventos: Map<string, Listener[]> = new Map();
