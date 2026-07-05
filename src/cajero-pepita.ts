@@ -7,6 +7,13 @@ enum TipoTransaccion {
   CONSULTA = "CONSULTA"
 }
 
+// NUEVO ENUM: estados posibles de una factura
+enum EstadoFactura {
+  PENDIENTE = "PENDIENTE",
+  APROBADO = "APROBADO",
+  RECHAZADO = "RECHAZADO"
+}
+
 // TIPADO
 interface Transaccion {
   tipo: TipoTransaccion;
@@ -14,11 +21,17 @@ interface Transaccion {
   fecha: Date;
 }
 
+// NUEVO: representa cada cambio de estado con su fecha
+interface CambioEstado {
+  estado: EstadoFactura;
+  fecha: Date;
+}
+
 interface Factura {
   id: string;
   monto: number;
   tipo: TipoTransaccion;
-  estado: "PENDIENTE" | "APROBADO" | "RECHAZADO";
+  estado: CambioEstado[]; // antes era: "PENDIENTE" | "APROBADO" | "RECHAZADO"
   fecha: Date;
 }
 
@@ -100,7 +113,7 @@ class ProcesadorPago {
     const factura: Factura = {
       id: `FAC-${Date.now()}`,
       monto, tipo,
-      estado: "PENDIENTE",
+      estado: [{ estado: EstadoFactura.PENDIENTE, fecha: new Date() }],
       fecha: new Date(),
     };
     return { estado: "exitoso", valor: factura };
@@ -115,7 +128,10 @@ class ProcesadorPago {
     if (!esValido(factura, saldoActual))
       return { estado: "fallido", error: "Fondos insuficientes" };
 
-    const facturaAprobada: Factura = { ...factura, estado: "APROBADO" };
+    const facturaAprobada: Factura = {
+      ...factura,
+      estado: [...factura.estado, { estado: EstadoFactura.APROBADO, fecha: new Date() }],
+    };
 
     EventBus.emit("PagoCompletado", {
       monto: facturaAprobada.monto,
