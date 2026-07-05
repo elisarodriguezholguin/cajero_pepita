@@ -31,22 +31,27 @@ interface Factura {
   id: string;
   monto: number;
   tipo: TipoTransaccion;
-  estado: CambioEstado[]; // antes era: "PENDIENTE" | "APROBADO" | "RECHAZADO"
+  estado: CambioEstado[]; 
   fecha: Date;
 }
 
 type Resultado<T> =
   | { estado: "exitoso"; valor: T }
   | { estado: "fallido"; error: string };
-
+//Listener  que recibe un parámetro 
+// llamado data puedes ser tipo any, o cualquier cosa) y no retorna nada "void"
 type Listener = (data: any) => void;
 
 // CLOSURE + MEMOIZACIÓN
+//Para llamar cualquie funcion que quiera memorizar.
 function memoize(fn: Function) {
   const cache = new Map<string, any>();
+  //memoize al nos saber cuantos argumeetos recibirá esa función retornada, ya quees geenrica.
+  // el args es la funcion interna de memoize que construye  y retorna.
+  // aqui ...args ,recoge datos esta un arreglo esperando cualque cantidad de argumentos 
   return (...args: any[]) => {
     const key = JSON.stringify(args);
-    if (!cache.has(key)) cache.set(key, fn(...args));
+    if (!cache.has(key)) cache.set(key, fn(...args));// aqui es desempaquetando argumentos que ya estan
     return cache.get(key);
   };
 }
