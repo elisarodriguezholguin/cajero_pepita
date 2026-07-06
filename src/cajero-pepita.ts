@@ -60,10 +60,11 @@ function memoize(fn: Function) {
 // PARADIGMA: Eventos
 class EventBus {
   private static eventos: Map<string, Listener[]> = new Map(); //Map tipo de dato que va guardar// New map creación de un objeto Map nuevo y vacío.
-
+//se compone un map una llave y lista de valor 
   static on(evento: string, listener: Listener): void {
-    if (!this.eventos.has(evento)) this.eventos.set(evento, []);
+    if (!this.eventos.has(evento)) this.eventos.set(evento, []);//has, existe o no lo tiene.
     this.eventos.get(evento)!.push(listener);
+    //guardar en una variable el has , sobre el if hacer condicion
   }
 
   static emit(evento: string, data: any): void {
@@ -186,10 +187,10 @@ class Cajero {
     CargaExtrema.finalizarOperacion();
     if (procesoResult.estado === "fallido") return procesoResult.error;
 
-    const billetesADispensar = this.calcularBilletes(monto) as number[];
+    const billetesADispensar = this.calcularBilletes(monto) as number[];//Determina un billet objeto ,compuesto por monto, y tipo moneda y valor
     const detalle = billetesADispensar
       .map((billete: number) => `  $${billete}`)
-      .join(" |");
+      .join(" | ");
 //Resta el monto del saldo
     this.saldo -= monto;
     return `${detalle}\n  Retiro exitoso. Saldo actual: $${this.saldo}`;
@@ -214,11 +215,11 @@ class Cajero {
 //--------------------------------------------------------------
   // SCOPE + MEMOIZACIÓN
   //Encapsulamiento (POO)
-  private calcularBilletes = memoize((monto: number): number[] => {
+  private calcularBilletes = memoize((monto: number): number[] => { 
     let restante = monto;
     //
     return DENOMINACIONES.flatMap(denom => {
-//flatMap recorre cada elemento del arreglo DENOMINACIONES.
+//flatMap recorre cada elemento del arreglo DENOMINACIONES, funcion escoge valores que existe y los aplana, programacion orientada a objetos los reocge
       const cantidad = Math.floor(restante / denom);
       restante %= denom;
       return Array(cantidad).fill(denom);
@@ -233,7 +234,7 @@ class Cajero {
 
   public deshacerUltimaOperacion(): string {
     if (this.historial.length === 0) return "No hay transacciones para deshacer";
-    const ultima = this.historial.pop() as Transaccion;
+    const ultima = this.historial.pop() as Transaccion;// praxticr tipado
     if (ultima.tipo === TipoTransaccion.RETIRO) this.saldo += ultima.monto;
     if (ultima.tipo === TipoTransaccion.DEPOSITO) this.saldo -= ultima.monto;
     return `  Se revirtio: ${ultima.tipo} de $${ultima.monto}. Saldo: $${this.saldo}`;
@@ -262,7 +263,7 @@ const pausa = (ms: number) => new Promise(r => setTimeout(r, ms));
 async function mostrarPasos(pasos: string[]): Promise<void> {
   for (const paso of pasos) {
     await pausa(500);
-    console.log(paso);
+    console.log(paso);//
   }
 }
 //Arreglo de cadenas  texto que representan los pasos de una transaccion.
@@ -329,7 +330,7 @@ const opciones: Record<string, () => Promise<void>> = {
 // Punto de entrada del sistema.
 // Controla el flujo del menú interactivo usando programación asíncrona
 // para esperar input del usuario sin bloquear el hilo principal.
-async function iniciar(): Promise<void> {
+async function iniciar(): Promise<void> {// investigar los tres tipos de async callback, etc?
   console.log("\n" + "═".repeat(40));
   console.log("   Bienvenido al Cajero Automatico");
   console.log("            BANCO PEPITA");
