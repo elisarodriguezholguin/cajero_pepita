@@ -327,6 +327,7 @@ const opciones: Record<string, () => Promise<void>> = {
     rl.close();
   },
 };
+//Investigar matriz diagnostica en la diapistiva es aparte de este codigo
 // Punto de entrada del sistema.
 // Controla el flujo del menú interactivo usando programación asíncrona
 // para esperar input del usuario sin bloquear el hilo principal.
