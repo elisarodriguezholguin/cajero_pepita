@@ -213,7 +213,7 @@ class Cajero {
   }
   
 //--------------------------------------------------------------
-  // SCOPE + MEMOIZACIÓN
+//SCOPE + MEMOIZACIÓN
   //Encapsulamiento (POO)
   private calcularBilletes = memoize((monto: number): number[] => { 
     let restante = monto;
