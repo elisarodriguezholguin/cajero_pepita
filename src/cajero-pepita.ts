@@ -51,8 +51,13 @@ function memoize(fn: Function) {
   // aqui ...args ,recoge datos esta un arreglo esperando cualque cantidad de argumentos 
   return (...args: any[]) => {
     const key = JSON.stringify(args);
-    if (!cache.has(key)) cache.set(key, fn(...args));// aqui es desempaquetando argumentos que ya estan
-    return cache.get(key);
+    const valorEnCache = cache.get(key);
+    if (valorEnCache !== undefined) {
+      return valorEnCache;
+    }
+    const resultado = fn(...args);
+    cache.set(key, resultado);
+    return resultado;
   };
 }
 
@@ -62,9 +67,13 @@ class EventBus {
   private static eventos: Map<string, Listener[]> = new Map(); //Map tipo de dato que va guardar// New map creación de un objeto Map nuevo y vacío.
 //se compone un map una llave y lista de valor 
   static on(evento: string, listener: Listener): void {
-    if (!this.eventos.has(evento)) this.eventos.set(evento, []);//has, existe o no lo tiene.
-    this.eventos.get(evento)!.push(listener);
-    //guardar en una variable el has , sobre el if hacer condicion
+   const listeners = this.eventos.get(evento);
+    if (listeners) {
+      listeners.push(listener);
+    } else {
+      this.eventos.set(evento, [listener]);
+    }
+//guardamos el resultado de get() en una variable para no consultar el Map dos veces
   }
 
   static emit(evento: string, data: any): void {
