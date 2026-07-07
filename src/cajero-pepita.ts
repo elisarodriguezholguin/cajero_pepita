@@ -73,7 +73,7 @@ class EventBus {
     } else {
       this.eventos.set(evento, [listener]);
     }
-//guardamos el resultado de get() en una variable para no consultar el Map dos veces
+//guardamos el resultado de get() en una variable para no consultar el Map dos veces, se modifico lo del has 
   }
 
   static emit(evento: string, data: any): void {
